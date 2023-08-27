@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34018.315
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Human Readable Duration Format", "Human Readable Duration Format.csproj", "{D2FFEAD0-C969-4E23-85D9-801F2483A54C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D2FFEAD0-C969-4E23-85D9-801F2483A54C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2FFEAD0-C969-4E23-85D9-801F2483A54C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2FFEAD0-C969-4E23-85D9-801F2483A54C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2FFEAD0-C969-4E23-85D9-801F2483A54C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7F7F36AA-7A20-45F6-A390-C85B64823E44}
+	EndGlobalSection
+EndGlobal
