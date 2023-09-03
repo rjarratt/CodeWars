@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34024.191
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MorseCodePart3", "MorseCodePart3.csproj", "{1C96ED3E-E353-4904-9919-DDE8147D1E06}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1C96ED3E-E353-4904-9919-DDE8147D1E06}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C96ED3E-E353-4904-9919-DDE8147D1E06}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C96ED3E-E353-4904-9919-DDE8147D1E06}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C96ED3E-E353-4904-9919-DDE8147D1E06}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8527FF1D-D007-47F3-94D4-5801C4063414}
+	EndGlobalSection
+EndGlobal
