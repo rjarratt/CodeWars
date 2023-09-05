@@ -135,7 +135,14 @@ public class MorseCodeDecoder
                     }
                 }
 
+                if (numInCluster > 0)
+                {
                 means[k] = sum / numInCluster;
+            }
+                else
+                {
+                    means[k] = int.MaxValue;
+                }
             }
 
             //Console.WriteLine("Latest cluster");
