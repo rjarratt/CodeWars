@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-internal static class MorseCode
+internal static class Preloaded
 {
-    static Dictionary<string, string> morseCode = new Dictionary<string, string>()
+    public static Dictionary<string, string> MORSE_CODE = new Dictionary<string, string>()
     {
         { "-..", "D" },
         { ".", "E" },
@@ -15,9 +15,4 @@ internal static class MorseCode
         { "-.--", "Y" },
         { "..-", "U" },
     };
-
-    public static string Get(string code)
-    {
-        return morseCode[code];
-    }
 }
