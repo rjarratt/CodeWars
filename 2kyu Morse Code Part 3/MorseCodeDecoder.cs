@@ -26,7 +26,7 @@ public class MorseCodeDecoder
                         1 => "-",
                         _ => "?",
                     };
-    }
+                }
                 else
                 {
                     morse = clusters[i] switch
@@ -54,7 +54,12 @@ public class MorseCodeDecoder
 
     private static string DecodeWord(string word)
     {
-        string result = string.Concat(word.Split(' ').Select(letter => Preloaded.MORSE_CODE[letter]));
+        string result = string.Empty;
+        if (!string.IsNullOrEmpty(word))
+        {
+            result = string.Concat(word.Split(' ').Select(letter => Preloaded.MORSE_CODE[letter]));
+        }
+
         return result;
     }
 
