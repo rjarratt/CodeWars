@@ -100,10 +100,11 @@ public class MorseCodeDecoder
     {
         const int MaxIterations = 10;
 
-        // we know we need the following three time length:
+        // We need k=3 clusters for the following 4 time lengths:
         // 1. Dot and inter-dot-dash pause
         // 2. Dash and inter-letter pause
         // 3. Word delimiter
+
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
