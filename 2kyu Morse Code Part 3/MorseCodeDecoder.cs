@@ -102,7 +102,7 @@ public class MorseCodeDecoder
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
-        double[] means = new double[] { min, (double)(max + min) / 2, max };
+        double[] means = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 3 * min) };
         PrintMeans(means);
 
         int[] newClusterNumber = new int[vector.Length];
@@ -172,6 +172,7 @@ public class MorseCodeDecoder
         {
             Console.Write($"{clusterNumber} ");
         }
+
         Console.WriteLine();
     }
 
@@ -182,6 +183,7 @@ public class MorseCodeDecoder
         {
             Console.Write($"{mean} ");
         }
+
         Console.WriteLine();
     }
 }
