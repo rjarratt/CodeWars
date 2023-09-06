@@ -59,8 +59,12 @@ public class MorseCodeDecoder
         {
             result = string.Concat(word.Split(' ').Select(letter =>
             {
-                string? result = "?";
-                Preloaded.MORSE_CODE.TryGetValue(letter, out result);
+                string result;
+                if (!Preloaded.MORSE_CODE.TryGetValue(letter, out result))
+                {
+                    result = "?";
+                }
+
                 return result;
             }));
         }
