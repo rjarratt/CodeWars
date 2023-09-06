@@ -14,6 +14,9 @@ public class Tests
 
     [TestMethod]
     [DataRow("00000000", "")]
+    [DataRow("111", "E")]
+    [DataRow("11111100111111", "M")]
+    [DataRow("1001", "E")]
     public void OtherTests(string bits, string expected)
     {
         MorseCodeDecoder.decodeMorse(MorseCodeDecoder.decodeBitsAdvanced(bits)).Should().Be(expected);
