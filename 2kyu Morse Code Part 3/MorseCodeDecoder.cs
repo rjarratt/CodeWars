@@ -24,7 +24,7 @@ public class MorseCodeDecoder
                     {
                         0 => ".",
                         1 => "-",
-                        _ => "?",
+                        _ => "-",
                     };
                 }
                 else
@@ -93,6 +93,8 @@ public class MorseCodeDecoder
 
     private static int[] KMeansCluster(int[] vector)
     {
+        const int MaxIterations = 10;
+
         // we know we need the following three time length:
         // 1. Dot and inter-dot-dash pause
         // 2. Dash and inter-letter pause
@@ -100,19 +102,21 @@ public class MorseCodeDecoder
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
-        int[] means = new int[] { min, (max-min)/2, max };
+        double[] means = new double[] { min, (double)(max - min) / 2, max };
 
         int[] newClusterNumber = new int[vector.Length];
 
-        for (int i = 0; i < 10; i++)
+        bool converged = false;
+
+        for (int i = 0; i < MaxIterations && !converged; i++)
         {
             // Assign step
             for (int j = 0; j < vector.Length; j++)
             {
-                int distance = int.MaxValue;
+                double distance = int.MaxValue;
                 for (int k = 0; k < means.Length; k++)
                 {
-                    int currentDistance = Math.Abs(vector[j] - means[k]);
+                    double currentDistance = Math.Abs(vector[j] - means[k]);
                     if (currentDistance < distance)
                     {
                         distance = currentDistance;
@@ -121,6 +125,7 @@ public class MorseCodeDecoder
                 }
             }
 
+            converged = true;
             // Update step
             for (int k = 0; k < means.Length; k++)
             {
@@ -135,14 +140,20 @@ public class MorseCodeDecoder
                     }
                 }
 
+                double newMean;
                 if (numInCluster > 0)
                 {
-                means[k] = sum / numInCluster;
+                    newMean = (double)sum / numInCluster;
             }
                 else
                 {
-                    means[k] = int.MaxValue;
+                    newMean = int.MaxValue;
                 }
+
+                if (means[k] != newMean)
+                {
+                    means[k] = newMean;
+                    converged = false;
             }
 
             //Console.WriteLine("Latest cluster");
@@ -152,6 +163,7 @@ public class MorseCodeDecoder
             //}
             //Console.WriteLine();
         }
+
 
         return newClusterNumber;
     }
