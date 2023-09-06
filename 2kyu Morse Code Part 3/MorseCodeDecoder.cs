@@ -12,7 +12,7 @@ public class MorseCodeDecoder
         if (!string.IsNullOrEmpty(trimmedBits))
         {
             int[] lengths = RunLengths(trimmedBits).ToArray();
-            Console.WriteLine(trimmedBits);
+            Console.WriteLine($"Trimmed bits: {trimmedBits}");
             int[] clusters = KMeansCluster(lengths);
 
             for (int i = 0; i < clusters.Length; i++)
@@ -41,7 +41,7 @@ public class MorseCodeDecoder
             }
         }
 
-        Console.WriteLine(result.ToString());
+        Console.WriteLine($"Decoded results: {result.ToString()}");
         return result.ToString();
     }
 
@@ -102,7 +102,8 @@ public class MorseCodeDecoder
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
-        double[] means = new double[] { min, (double)(max - min) / 2, max };
+        double[] means = new double[] { min, (double)(max + min) / 2, max };
+        PrintMeans(means);
 
         int[] newClusterNumber = new int[vector.Length];
 
@@ -144,7 +145,7 @@ public class MorseCodeDecoder
                 if (numInCluster > 0)
                 {
                     newMean = (double)sum / numInCluster;
-            }
+                }
                 else
                 {
                     newMean = int.MaxValue;
@@ -154,17 +155,33 @@ public class MorseCodeDecoder
                 {
                     means[k] = newMean;
                     converged = false;
+                }
             }
 
-            //Console.WriteLine("Latest cluster");
-            //foreach (int clusterNumber in newClusterNumber)
-            //{
-            //    Console.Write($"{clusterNumber} ");
-            //}
-            //Console.WriteLine();
+            PrintMeans(means);
+            PrintClusters(newClusterNumber);
         }
 
-
         return newClusterNumber;
+    }
+
+    private static void PrintClusters(int[] newClusterNumber)
+    {
+        Console.WriteLine($"Clusters are:");
+        foreach (int clusterNumber in newClusterNumber)
+        {
+            Console.Write($"{clusterNumber} ");
+        }
+        Console.WriteLine();
+    }
+
+    private static void PrintMeans(double[] means)
+    {
+        Console.WriteLine($"Means are:");
+        foreach (double mean in means)
+        {
+            Console.Write($"{mean} ");
+        }
+        Console.WriteLine();
     }
 }
