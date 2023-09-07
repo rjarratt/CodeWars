@@ -7,6 +7,7 @@ public class MorseCodeDecoder
 {
     public static string decodeBitsAdvanced(string bits)
     {
+        StringBuilder diagnosticString = new StringBuilder();
         StringBuilder result = new StringBuilder();
         string trimmedBits = bits.Trim('0');
         if (!string.IsNullOrEmpty(trimmedBits))
@@ -37,11 +38,16 @@ public class MorseCodeDecoder
                     };
                 }
 
+                string format = "{0,-" + lengths[i].ToString() + "}";
+                diagnosticString.AppendFormat(format, morse.Replace(' ', 'b'));
+
                 result.Append(morse);
             }
         }
 
         Console.WriteLine($"Decoded results: {result.ToString()}");
+        Console.WriteLine($"Bits:    {trimmedBits}");
+        Console.WriteLine($"Mapping: {diagnosticString.ToString()}");
         return result.ToString();
     }
 
