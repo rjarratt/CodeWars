@@ -22,6 +22,8 @@ public class Tests
     [DataRow("100001", "EE")]
     public void OtherTests(string bits, string expected)
     {
-        MorseCodeDecoder.decodeMorse(MorseCodeDecoder.decodeBitsAdvanced(bits)).Should().Be(expected);
+        string morse = MorseCodeDecoder.decodeBitsAdvanced(bits);
+        string decodedMorse = MorseCodeDecoder.decodeMorse(morse);
+        decodedMorse.Should().Be(expected);
     }
 }
