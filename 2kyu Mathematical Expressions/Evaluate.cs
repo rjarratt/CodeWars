@@ -36,7 +36,8 @@ public class Evaluate
         double result = 0;
         int nextPrecedence = -1;
         moreTokens = tokenEnumerator.MoveNext();
-        while (moreTokens)
+        bool endOfExpression = false;
+        while (moreTokens && !endOfExpression)
         {
             Token? currentToken = tokenEnumerator.Current;
 
@@ -46,6 +47,7 @@ public class Evaluate
                     result = double.Parse(currentToken.Symbol);
                     moreTokens = tokenEnumerator.MoveNext();
                     break;
+
                 case TokenType.PlusOperator:
                     nextPrecedence = 0;
                     if (precedenceLevel <= nextPrecedence)
@@ -54,6 +56,7 @@ public class Evaluate
                     }
 
                     break;
+
                 case TokenType.MinusOperator:
                     nextPrecedence = 0;
                     if (precedenceLevel <= nextPrecedence)
@@ -62,6 +65,7 @@ public class Evaluate
                     }
 
                     break;
+
                 case TokenType.MultiplyOperator:
                     nextPrecedence = 1;
                     if (precedenceLevel <= nextPrecedence)
@@ -70,6 +74,7 @@ public class Evaluate
                     }
 
                     break;
+
                 case TokenType.DivideOperator:
                     nextPrecedence = 1;
                     if (precedenceLevel <= nextPrecedence)
@@ -78,6 +83,7 @@ public class Evaluate
                     }
 
                     break;
+
                 case TokenType.PowerOperator:
                     nextPrecedence = 2;
                     if (precedenceLevel <= nextPrecedence)
@@ -88,13 +94,28 @@ public class Evaluate
 
                     break;
 
+                case TokenType.LeftParenthesis:
+                    result = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
+                    if (tokenEnumerator.Current.TokenType != TokenType.RightParenthesis)
+                    {
+                        throw new InvalidOperationException("Mismatched parentheses");
+                    }
+
+                    moreTokens = tokenEnumerator.MoveNext();
+                    break;
+
+                case TokenType.RightParenthesis:
+                    moreTokens = tokenEnumerator.MoveNext();
+                    endOfExpression = true;
+                    break;
+
                 default:
                     throw new InvalidOperationException("Unsupported token");
             }
 
             if (nextPrecedence >=0 && precedenceLevel > nextPrecedence)
             {
-                break;
+                endOfExpression = true;
             }
         }
 
@@ -163,7 +184,6 @@ public class Evaluate
                             }
                     }
                 }
-
             }
         }
 
