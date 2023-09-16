@@ -12,7 +12,15 @@ public class Evaluate
         try
         {
             IEnumerator<Token> tokenEnumerator = Tokenizer.ReadTokens(expression).GetEnumerator();
-            result = EvaluateExpression(tokenEnumerator).ToString();
+            double expressionValue = EvaluateExpression(tokenEnumerator);
+            if (double.IsInfinity(expressionValue))
+            {
+                result = "ERROR";
+            }
+            else
+            {
+                result = expressionValue.ToString();
+            }
         }
         catch
         {
@@ -44,7 +52,7 @@ public class Evaluate
                     result *= EvaluateExpression(tokenEnumerator);
                     break;
                 case TokenType.DivideOperator:
-                    result /= EvaluateExpression(tokenEnumerator);
+                    result/= EvaluateExpression(tokenEnumerator);
                     break;
                 case TokenType.PowerOperator:
                     result = Math.Pow(result, EvaluateExpression(tokenEnumerator));
