@@ -30,6 +30,7 @@ public class AccountTest
     [DataRow("2&3", "8")]
     [DataRow("1+2*3", "7")]
     [DataRow("2*3+1", "7")]
+    [DataRow("-1+3", "2")]
     [DataRow("(2)", "2")]
     [DataRow("2*(3+1)", "8")]
     [DataRow("2*(3+1", "ERROR")]

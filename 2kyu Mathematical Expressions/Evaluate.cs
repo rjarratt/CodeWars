@@ -1,6 +1,7 @@
 ﻿namespace Evaluation;
 
 using System;
+using System.Collections.Generic;
 using System.Text;
 
 public class Evaluate
@@ -37,6 +38,7 @@ public class Evaluate
         int nextPrecedence = -1;
         moreTokens = tokenEnumerator.MoveNext();
         bool endOfExpression = false;
+        bool isUnary = true;
         while (moreTokens && !endOfExpression)
         {
             Token? currentToken = tokenEnumerator.Current;
@@ -49,7 +51,7 @@ public class Evaluate
                     break;
 
                 case TokenType.PlusOperator:
-                    nextPrecedence = 0;
+                    nextPrecedence = isUnary ? 4 : 0;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result += EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -58,7 +60,7 @@ public class Evaluate
                     break;
 
                 case TokenType.MinusOperator:
-                    nextPrecedence = 0;
+                    nextPrecedence = isUnary? 4 : 0;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result -= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -116,6 +118,8 @@ public class Evaluate
             {
                 endOfExpression = true;
             }
+
+            isUnary = false;
         }
 
         return result;
