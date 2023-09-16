@@ -110,6 +110,85 @@ public class Evaluate
                     endOfExpression = true;
                     break;
 
+                case TokenType.Identifier:
+                    string function = currentToken.Symbol;
+                    if (!tokenEnumerator.MoveNext())
+                    {
+                        throw new InvalidOperationException("Missing argument");
+                    }
+
+                    double argument = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
+                    if (tokenEnumerator.Current.TokenType != TokenType.RightParenthesis)
+                    {
+                        throw new InvalidOperationException("Closing parenthesis on function call is missing");
+                    }
+
+                    moreTokens = tokenEnumerator.MoveNext();
+                    endOfExpression = true;
+
+                    switch (function)
+                    {
+                        case "log":
+                            result = Math.Log10(argument);
+                            break;
+
+                        case "ln":
+                            result = Math.Log(argument);
+                            break;
+
+                        case "exp":
+                            result = Math.Exp(argument);
+                            break;
+
+                        case "sqrt":
+                            result = Math.Sqrt(argument);
+                            break;
+
+                        case "abs":
+                            result = Math.Abs(argument);
+                            break;
+
+                        case "atan":
+                            result = Math.Atan(argument);
+                            break;
+
+                        case "acos":
+                            result = Math.Acos(argument);
+                            break;
+
+                        case "asin":
+                            result = Math.Asin(argument);
+                            break;
+
+                        case "sinh":
+                            result = Math.Sinh(argument);
+                            break;
+
+                        case "cosh":
+                            result = Math.Cosh(argument);
+                            break;
+
+                        case "tanh":
+                            result = Math.Tanh(argument);
+                            break;
+
+                        case "tan":
+                            result = Math.Tan(argument);
+                            break;
+
+                        case "sin":
+                            result = Math.Sin(argument);
+                            break;
+
+                        case "cos":
+                            result = Math.Cos(argument);
+                            break;
+
+                        default:
+                            throw new InvalidOperationException("Unknown function");
+                    }
+                    break;
+
                 default:
                     throw new InvalidOperationException("Unsupported token");
             }
