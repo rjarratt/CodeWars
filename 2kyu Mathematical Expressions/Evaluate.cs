@@ -105,7 +105,6 @@ public class Evaluate
                     break;
 
                 case TokenType.RightParenthesis:
-                    moreTokens = tokenEnumerator.MoveNext();
                     endOfExpression = true;
                     break;
 
@@ -145,43 +144,49 @@ public class Evaluate
 
                 if (moreCharacters)
                 {
+                    Token? result = null;
                     switch (currentChar)
                     {
                         case '+':
                             {
-                                yield return new Token(TokenType.PlusOperator, string.Empty);
+                                result = new Token(TokenType.PlusOperator, string.Empty);
                                 break;
                             }
                         case '-':
                             {
-                                yield return new Token(TokenType.MinusOperator, string.Empty);
+                                result = new Token(TokenType.MinusOperator, string.Empty);
                                 break;
                             }
                         case '*':
                             {
-                                yield return new Token(TokenType.MultiplyOperator, string.Empty);
+                                result = new Token(TokenType.MultiplyOperator, string.Empty);
                                 break;
                             }
                         case '/':
                             {
-                                yield return new Token(TokenType.DivideOperator, string.Empty);
+                                result = new Token(TokenType.DivideOperator, string.Empty);
                                 break;
                             }
                         case '&':
                             {
-                                yield return new Token(TokenType.PowerOperator, string.Empty);
+                                result = new Token(TokenType.PowerOperator, string.Empty);
                                 break;
                             }
                         case '(':
                             {
-                                yield return new Token(TokenType.LeftParenthesis, string.Empty);
+                                result = new Token(TokenType.LeftParenthesis, string.Empty);
                                 break;
                             }
                         case ')':
                             {
-                                yield return new Token(TokenType.RightParenthesis, string.Empty);
+                                result = new Token(TokenType.RightParenthesis, string.Empty);
                                 break;
                             }
+                    }
+
+                    if (result is not null)
+                    {
+                        yield return result;
                     }
                 }
             }
