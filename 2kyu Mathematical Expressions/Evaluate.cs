@@ -1,19 +1,57 @@
 ﻿namespace Evaluation;
 
 using System;
-using System.Collections;
 using System.Text;
-using System.Text.Json;
 
 public class Evaluate
 {
     public string eval(string expression)
     {
-        foreach(Token t in Tokenizer.ReadTokens(expression))
+
+        string result;
+        try
         {
-            Console.WriteLine(t);
+            IEnumerator<Token> tokenEnumerator = Tokenizer.ReadTokens(expression).GetEnumerator();
+            result = EvaluateExpression(tokenEnumerator).ToString();
         }
-        string result = "0"; //calculated expression (double converted to string) or Errormessage starting with "ERROR" (+ optional Errormessage)
+        catch
+        {
+            result = "ERROR";
+        }
+
+        return result;
+    }
+
+    private static double EvaluateExpression(IEnumerator<Token> tokenEnumerator)
+    {
+        double result = 0;
+        while (tokenEnumerator.MoveNext())
+        {
+            Token? currentToken = tokenEnumerator.Current;
+
+            switch (currentToken.TokenType)
+            {
+                case TokenType.Number:
+                    result = double.Parse(currentToken.Symbol);
+                    break;
+                case TokenType.PlusOperator:
+                    result += EvaluateExpression(tokenEnumerator);
+                    break;
+                case TokenType.MinusOperator:
+                    result -= EvaluateExpression(tokenEnumerator);
+                    break;
+                case TokenType.MultiplyOperator:
+                    result *= EvaluateExpression(tokenEnumerator);
+                    break;
+                case TokenType.DivideOperator:
+                    result /= EvaluateExpression(tokenEnumerator);
+                    break;
+                case TokenType.PowerOperator:
+                    result = Math.Pow(result, EvaluateExpression(tokenEnumerator));
+                    break;
+            }
+        }
+
         return result;
     }
 
@@ -136,6 +174,6 @@ public class Evaluate
         RightParenthesis,
     }
 
-    private record Token (TokenType TokenType, string Symbol);
+    private record Token(TokenType TokenType, string Symbol);
 
 }

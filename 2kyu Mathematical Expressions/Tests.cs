@@ -9,13 +9,26 @@ public class AccountTest
     private readonly Evaluate ev = new Evaluate();
 
     [TestMethod]
-    [DataRow("18", "2*3&2")]
-    [DataRow("-240", "(-(2 + 3)* (1 + 2)) * 4 & 2")]
-    [DataRow("ERROR", "sqrt(-2)*2")]
-    [DataRow("ERROR", "2*5/0")]
-    [DataRow("-3906251", "-5&3&2*2-1")]
-    [DataRow("169", "abs(-(-1+(2*(4--3)))&2)")]
-    public void TestCases(string expected, string expression)
+    [DataRow("2*3&2", "18")]
+    [DataRow("(-(2 + 3)* (1 + 2)) * 4 & 2", "-240")]
+    [DataRow("sqrt(-2)*2", "ERROR")]
+    [DataRow("2*5/0", "ERROR")]
+    [DataRow("-5&3&2*2-1", "-3906251")]
+    [DataRow("abs(-(-1+(2*(4--3)))&2)", "169")]
+    public void TestCases(string expression, string expected)
+    {
+        this.ev.eval(expression).Should().Be(expected);
+    }
+
+    [TestMethod]
+    [DataRow("", "0")]
+    [DataRow("22", "22")]
+    [DataRow("2+2", "4")]
+    [DataRow("3-2", "1")]
+    [DataRow("3*2", "6")]
+    [DataRow("7/3", "2.3333333333333335")]
+    [DataRow("2&3", "8")]
+    public void MyIncrementalBuildTestCases(string expression, string expected)
     {
         this.ev.eval(expression).Should().Be(expected);
     }
