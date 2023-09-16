@@ -291,6 +291,40 @@ public class Evaluate
                 {
                     currentSymbol.Append(currentChar);
                 }
+                else if (currentChar == 'e')
+                {
+                    currentSymbol.Append(currentChar);
+                    if (moreCharacters = characterEnumerator.MoveNext())
+                    {
+                        currentChar = characterEnumerator.Current;
+                        if (currentChar == '+' || currentChar == '-')
+                        {
+                            currentSymbol.Append(currentChar);
+                            if (moreCharacters = characterEnumerator.MoveNext())
+                            {
+                                currentChar = characterEnumerator.Current;
+                                if (!char.IsDigit(currentChar))
+                                {
+                                    throw new InvalidOperationException("Invalid exponent");
+                                }
+
+                                currentSymbol.Append(currentChar);
+                            }
+                        }
+                        else if (char.IsDigit(currentChar))
+                        {
+                            currentSymbol.Append(currentChar);
+                        }
+                        else
+                        {
+                            throw new InvalidOperationException("Missing exponent");
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException("Missing exponent");
+                    }
+                }
                 else
                 {
                     break;
