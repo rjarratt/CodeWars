@@ -14,7 +14,7 @@ public class Evaluate
             IEnumerator<Token> tokenEnumerator = Tokenizer.ReadTokens(expression).GetEnumerator();
             bool moreTokens = true;
             double expressionValue = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
-            if (double.IsInfinity(expressionValue))
+            if (moreTokens || double.IsInfinity(expressionValue))
             {
                 result = "ERROR";
             }

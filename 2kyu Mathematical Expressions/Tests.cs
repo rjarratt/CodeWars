@@ -32,8 +32,8 @@ public class AccountTest
     [DataRow("2*3+1", "7")]
     [DataRow("(2)", "2")]
     [DataRow("2*(3+1)", "8")]
-    //[DataRow("2*(3+1", "ERROR")]
-    //[DataRow("1)", "ERROR")]
+    [DataRow("2*(3+1", "ERROR")]
+    [DataRow("1)", "ERROR")]
     //[DataRow("(1+2(*3))", "ERROR")]
     //[DataRow("(1+)2(+2)", "ERROR")]
     public void MyIncrementalBuildTestCases(string expression, string expected)
