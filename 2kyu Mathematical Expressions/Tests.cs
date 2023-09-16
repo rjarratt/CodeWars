@@ -28,6 +28,8 @@ public class AccountTest
     [DataRow("3*2", "6")]
     [DataRow("7/3", "2.3333333333333335")]
     [DataRow("2&3", "8")]
+    [DataRow("1+2*3", "7")]
+    [DataRow("2*3+1", "7")]
     public void MyIncrementalBuildTestCases(string expression, string expected)
     {
         this.ev.eval(expression).Should().Be(expected);

@@ -12,7 +12,8 @@ public class Evaluate
         try
         {
             IEnumerator<Token> tokenEnumerator = Tokenizer.ReadTokens(expression).GetEnumerator();
-            double expressionValue = EvaluateExpression(tokenEnumerator);
+            bool moreTokens = true;
+            double expressionValue = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
             if (double.IsInfinity(expressionValue))
             {
                 result = "ERROR";
@@ -30,10 +31,12 @@ public class Evaluate
         return result;
     }
 
-    private static double EvaluateExpression(IEnumerator<Token> tokenEnumerator)
+    private static double EvaluateExpression(IEnumerator<Token> tokenEnumerator, int precedenceLevel, ref bool moreTokens)
     {
         double result = 0;
-        while (tokenEnumerator.MoveNext())
+        int nextPrecedence = -1;
+        moreTokens = tokenEnumerator.MoveNext();
+        while (moreTokens)
         {
             Token? currentToken = tokenEnumerator.Current;
 
@@ -41,22 +44,57 @@ public class Evaluate
             {
                 case TokenType.Number:
                     result = double.Parse(currentToken.Symbol);
+                    moreTokens = tokenEnumerator.MoveNext();
                     break;
                 case TokenType.PlusOperator:
-                    result += EvaluateExpression(tokenEnumerator);
+                    nextPrecedence = 0;
+                    if (precedenceLevel <= nextPrecedence)
+                    {
+                        result += EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
+                    }
+
                     break;
                 case TokenType.MinusOperator:
-                    result -= EvaluateExpression(tokenEnumerator);
+                    nextPrecedence = 0;
+                    if (precedenceLevel <= nextPrecedence)
+                    {
+                        result -= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
+                    }
+
                     break;
                 case TokenType.MultiplyOperator:
-                    result *= EvaluateExpression(tokenEnumerator);
+                    nextPrecedence = 1;
+                    if (precedenceLevel <= nextPrecedence)
+                    {
+                        result *= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
+                    }
+
                     break;
                 case TokenType.DivideOperator:
-                    result/= EvaluateExpression(tokenEnumerator);
+                    nextPrecedence = 1;
+                    if (precedenceLevel <= nextPrecedence)
+                    {
+                        result /= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
+                    }
+
                     break;
                 case TokenType.PowerOperator:
-                    result = Math.Pow(result, EvaluateExpression(tokenEnumerator));
+                    nextPrecedence = 2;
+                    if (precedenceLevel <= nextPrecedence)
+                    {
+                        result = Math.Pow(result, EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens));
+                        nextPrecedence = precedenceLevel;
+                    }
+
                     break;
+
+                default:
+                    throw new InvalidOperationException("Unsupported token");
+            }
+
+            if (nextPrecedence >=0 && precedenceLevel > nextPrecedence)
+            {
+                break;
             }
         }
 
