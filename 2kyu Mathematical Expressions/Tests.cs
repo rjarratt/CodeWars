@@ -31,6 +31,13 @@ public class AccountTest
     [DataRow("1+2*3", "7")]
     [DataRow("2*3+1", "7")]
     [DataRow("-1+3", "2")]
+    [DataRow("--1", "1")]
+    [DataRow("1+-1", "0")]
+    [DataRow("--1+-1", "0")]
+    [DataRow("1--1+-12", "14")]
+    [DataRow("-5&3&2*2-1", "-3906251")]
+    [DataRow("12+1--1+-12", "26")]
+    [DataRow("-2&2", "-4")]
     [DataRow("(2)", "2")]
     [DataRow("2*(3+1)", "8")]
     [DataRow("2*(3+1", "ERROR")]
@@ -38,6 +45,14 @@ public class AccountTest
     //[DataRow("(1+2(*3))", "ERROR")]
     //[DataRow("(1+)2(+2)", "ERROR")]
     public void MyIncrementalBuildTestCases(string expression, string expected)
+    {
+        this.ev.eval(expression).Should().Be(expected);
+    }
+
+    [TestMethod]
+    [DataRow("sqrt(-5&(12+1--1+-12))", "ERROR")]
+    //[DataRow("(-14--2*1e-3)&2", "195.94400399999998")]
+    public void AttemptTestCases(string expression, string expected)
     {
         this.ev.eval(expression).Should().Be(expected);
     }

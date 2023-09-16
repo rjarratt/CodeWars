@@ -6,6 +6,11 @@ using System.Text;
 
 public class Evaluate
 {
+    private const int plusMinusPrecedence = 0;
+    private const int multiplyDividePrecedence = 1;
+    private const int powerPrecedence = 3;
+    private const int unaryPrecedence = 2;
+
     public string eval(string expression)
     {
 
@@ -15,7 +20,7 @@ public class Evaluate
             IEnumerator<Token> tokenEnumerator = Tokenizer.ReadTokens(expression).GetEnumerator();
             bool moreTokens = true;
             double expressionValue = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
-            if (moreTokens || double.IsInfinity(expressionValue))
+            if (moreTokens || double.IsInfinity(expressionValue) || double.IsNaN(expressionValue))
             {
                 result = "ERROR";
             }
@@ -51,7 +56,7 @@ public class Evaluate
                     break;
 
                 case TokenType.PlusOperator:
-                    nextPrecedence = isUnary ? 4 : 0;
+                    nextPrecedence = isUnary ? unaryPrecedence : plusMinusPrecedence;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result += EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -60,7 +65,7 @@ public class Evaluate
                     break;
 
                 case TokenType.MinusOperator:
-                    nextPrecedence = isUnary? 4 : 0;
+                    nextPrecedence = isUnary? unaryPrecedence : plusMinusPrecedence;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result -= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -69,7 +74,7 @@ public class Evaluate
                     break;
 
                 case TokenType.MultiplyOperator:
-                    nextPrecedence = 1;
+                    nextPrecedence = multiplyDividePrecedence;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result *= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -78,7 +83,7 @@ public class Evaluate
                     break;
 
                 case TokenType.DivideOperator:
-                    nextPrecedence = 1;
+                    nextPrecedence = multiplyDividePrecedence;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result /= EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens);
@@ -87,7 +92,7 @@ public class Evaluate
                     break;
 
                 case TokenType.PowerOperator:
-                    nextPrecedence = 2;
+                    nextPrecedence = powerPrecedence;
                     if (precedenceLevel <= nextPrecedence)
                     {
                         result = Math.Pow(result, EvaluateExpression(tokenEnumerator, nextPrecedence, ref moreTokens));
@@ -97,7 +102,7 @@ public class Evaluate
                     break;
 
                 case TokenType.LeftParenthesis:
-                    result = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
+                    result = EvaluateExpression(tokenEnumerator, plusMinusPrecedence, ref moreTokens);
                     if (tokenEnumerator.Current.TokenType != TokenType.RightParenthesis)
                     {
                         throw new InvalidOperationException("Mismatched parentheses");
@@ -117,7 +122,7 @@ public class Evaluate
                         throw new InvalidOperationException("Missing argument");
                     }
 
-                    double argument = EvaluateExpression(tokenEnumerator, 0, ref moreTokens);
+                    double argument = EvaluateExpression(tokenEnumerator, plusMinusPrecedence, ref moreTokens);
                     if (tokenEnumerator.Current.TokenType != TokenType.RightParenthesis)
                     {
                         throw new InvalidOperationException("Closing parenthesis on function call is missing");
@@ -227,49 +232,49 @@ public class Evaluate
 
                 if (moreCharacters)
                 {
-                    Token? result = null;
+                    Token? token = null;
                     switch (currentChar)
                     {
                         case '+':
                             {
-                                result = new Token(TokenType.PlusOperator, string.Empty);
+                                token = new Token(TokenType.PlusOperator, string.Empty);
                                 break;
                             }
                         case '-':
                             {
-                                result = new Token(TokenType.MinusOperator, string.Empty);
+                                token = new Token(TokenType.MinusOperator, string.Empty);
                                 break;
                             }
                         case '*':
                             {
-                                result = new Token(TokenType.MultiplyOperator, string.Empty);
+                                token = new Token(TokenType.MultiplyOperator, string.Empty);
                                 break;
                             }
                         case '/':
                             {
-                                result = new Token(TokenType.DivideOperator, string.Empty);
+                                token = new Token(TokenType.DivideOperator, string.Empty);
                                 break;
                             }
                         case '&':
                             {
-                                result = new Token(TokenType.PowerOperator, string.Empty);
+                                token = new Token(TokenType.PowerOperator, string.Empty);
                                 break;
                             }
                         case '(':
                             {
-                                result = new Token(TokenType.LeftParenthesis, string.Empty);
+                                token = new Token(TokenType.LeftParenthesis, string.Empty);
                                 break;
                             }
                         case ')':
                             {
-                                result = new Token(TokenType.RightParenthesis, string.Empty);
+                                token = new Token(TokenType.RightParenthesis, string.Empty);
                                 break;
                             }
                     }
 
-                    if (result is not null)
+                    if (token is not null)
                     {
-                        yield return result;
+                        yield return token;
                     }
                 }
             }
