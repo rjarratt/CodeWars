@@ -129,7 +129,6 @@ public class Evaluate
                     }
 
                     moreTokens = tokenEnumerator.MoveNext();
-                    endOfExpression = true;
 
                     switch (function)
                     {
