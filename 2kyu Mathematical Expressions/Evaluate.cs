@@ -191,6 +191,7 @@ public class Evaluate
                         default:
                             throw new InvalidOperationException("Unknown function");
                     }
+
                     break;
 
                 default:
@@ -286,7 +287,7 @@ public class Evaluate
             while (moreCharacters = characterEnumerator.MoveNext())
             {
                 currentChar = characterEnumerator.Current;
-                if (char.IsDigit(currentChar))
+                if (char.IsDigit(currentChar) || currentChar == '.')
                 {
                     currentSymbol.Append(currentChar);
                 }
