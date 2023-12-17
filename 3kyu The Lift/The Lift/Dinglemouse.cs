@@ -111,7 +111,14 @@ public class Dinglemouse
                 else if (nextCallFloor is null && nextRequestFloor is  null)
                 {
                     nextFloor = this.FindHighestDownCall();
-                    this.currentDirection = Direction.Down;
+                    if (nextFloor is null)
+                    {
+                        nextFloor = this.FindLowestUpCall();
+                    }
+                    else
+                    {
+                        this.currentDirection = Direction.Down;
+                    }
                 }
                 else
                 {
@@ -130,6 +137,10 @@ public class Dinglemouse
                 {
                     nextFloor = this.FindLowestUpCall();
                     if (nextFloor is null)
+                    {
+                        nextFloor = this.FindHighestDownCall();
+                    }
+                    else
                     {
                         this.currentDirection = Direction.Up;
                     }
@@ -201,7 +212,7 @@ public class Dinglemouse
         private int? FindNextUpCall()
         {
             int? result = null;
-            Floor? nextFloor = this.floors.Skip(this.CurrentFloor).FirstOrDefault(floor => floor.HasUpCall());
+            Floor? nextFloor = this.floors.Skip(this.CurrentFloor + 1).FirstOrDefault(floor => floor.HasUpCall());
             if (nextFloor is not null)
             {
                 result = nextFloor.FloorNumber;

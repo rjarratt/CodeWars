@@ -71,4 +71,22 @@ public class ExampleTests
         var result = Dinglemouse.TheLift(queues, 5);
         result.Should().BeEquivalentTo(new[] { 0, 5, 4, 3, 2, 1, 0 });
     }
+
+    [TestMethod]
+    public void TestUpDownUp()
+    {
+        int[][] queues =
+        {
+            new int[0], // G
+            new int[0], // 1
+            new int[]{5,5,5}, // 2
+            new int[0], // 3
+            new int[0], // 4
+            new int[0], // 5
+            new int[0], // 6
+        };
+        var result = Dinglemouse.TheLift(queues, 2);
+        result.Should().BeEquivalentTo(new[] { 0, 2, 5, 2, 5, 0 });
+    }
+
 }
