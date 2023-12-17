@@ -11,21 +11,19 @@ public class Dinglemouse
     {
         List<int> result = new List<int>();
         Floor[] floors = queues.Select((queue, floor) => new Floor(queue.ToList(), floor)).ToArray();
+
         Lift lift = new Lift(floors, capacity);
         result.Add(lift.CurrentFloor);
-        lift.Collect();
 
         while (ThereArePeopleWaitingForTheLift(floors) || ThereArePeopleInTheLift(lift))
         {
-            int newFloor = lift.MoveToNextFloor();
             lift.SetDown();
             lift.Collect();
-            result.Add(newFloor);
-        }
-
-        if (lift.CurrentFloor != 0)
-        {
-            result.Add(lift.MoveToNextFloor());
+            int newFloor = lift.MoveToNextFloor();
+            if (result.Last() != newFloor)
+            {
+                result.Add(newFloor);
+            }
         }
 
         return result.ToArray();
@@ -68,6 +66,11 @@ public class Dinglemouse
             bool result = this.Queue.Any(request => request < this.FloorNumber);
             return result;
 
+        }
+
+        public override string ToString()
+        {
+            return $"{this.FloorNumber}: {string.Join(", ", this.Queue)}";
         }
     }
 
@@ -184,6 +187,11 @@ public class Dinglemouse
             {
                 floor.Queue.Remove(newPassenger);
             }
+        }
+
+        public override string ToString()
+        {
+            return $"At {this.CurrentFloor}, Occupants: {string.Join(", ", this.occupants)}";
         }
 
         private int? FindNextUpRequest()
