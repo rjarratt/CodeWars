@@ -18,7 +18,10 @@ public class Dinglemouse
             result.Add(newFloor);
         }
 
-        result.Add(lift.MoveToNextFloor());
+        if (lift.CurrentFloor != 0)
+        {
+            result.Add(lift.MoveToNextFloor());
+        }
 
         return result.ToArray();
     }
@@ -104,9 +107,27 @@ public class Dinglemouse
                 else if (nextCallFloor is null && nextRequestFloor is  null)
                 {
                     nextFloor = this.FindHighestDownCall();
+                    this.currentDirection = Direction.Down;
+                }
+                else
+                {
+                    nextFloor = nextCallFloor ?? nextRequestFloor;
+                }
+            }
+            else
+            {
+                nextCallFloor = this.FindNextDownCall();
+                nextRequestFloor = this.FindNextDownRequest();
+                if (nextCallFloor is not null && nextRequestFloor is not null)
+                {
+                    nextFloor = Math.Max(nextCallFloor.Value, nextRequestFloor.Value);
+                }
+                else if (nextCallFloor is null && nextRequestFloor is null)
+                {
+                    nextFloor = this.FindLowestUpCall();
                     if (nextFloor is null)
                     {
-                        this.currentDirection = Direction.Down;
+                        this.currentDirection = Direction.Up;
                     }
                 }
                 else
@@ -161,6 +182,18 @@ public class Dinglemouse
             return result;
         }
 
+        private int? FindNextDownRequest()
+        {
+            int? result = null;
+            IEnumerable<int> downRequests = this.occupants.Where(request => request < this.CurrentFloor);
+            if (downRequests.Any())
+            {
+                result = downRequests.Max();
+            }
+
+            return result;
+        }
+
         private int? FindNextUpCall()
         {
             int? result = null;
@@ -173,10 +206,34 @@ public class Dinglemouse
             return result;
         }
 
+        private int? FindNextDownCall()
+        {
+            int? result = null;
+            Floor? nextFloor = this.floors.Reverse().Skip(this.floors.Length - this.CurrentFloor).FirstOrDefault(floor => floor.HasDownCall());
+            if (nextFloor is not null)
+            {
+                result = nextFloor.FloorNumber;
+            }
+
+            return result;
+        }
+
         private int? FindHighestDownCall()
         {
             int? result = null;
             Floor? nextFloor = this.floors.Reverse().FirstOrDefault(floor => floor.HasDownCall());
+            if (nextFloor is not null)
+            {
+                result = nextFloor.FloorNumber;
+            }
+
+            return result;
+        }
+
+        private int? FindLowestUpCall()
+        {
+            int? result = null;
+            Floor? nextFloor = this.floors.FirstOrDefault(floor => floor.HasUpCall());
             if (nextFloor is not null)
             {
                 result = nextFloor.FloorNumber;
