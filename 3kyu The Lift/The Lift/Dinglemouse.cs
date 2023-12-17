@@ -13,6 +13,7 @@ public class Dinglemouse
         Floor[] floors = queues.Select((queue, floor) => new Floor(queue.ToList(), floor)).ToArray();
         Lift lift = new Lift(floors, capacity);
         result.Add(lift.CurrentFloor);
+        lift.Collect();
 
         while (ThereArePeopleWaitingForTheLift(floors) || ThereArePeopleInTheLift(lift))
         {
