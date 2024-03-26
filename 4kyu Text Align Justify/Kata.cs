@@ -1,6 +1,7 @@
 ﻿namespace Solution;
 
-using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 public static class Kata
@@ -9,9 +10,12 @@ public static class Kata
     {
         string[] words = str.Trim().Split(' ');
 
-        IEnumerable<string[]> canonicalLines = BuildCanonicalLines(words, len);
+        IList<string[]> canonicalLines = BuildCanonicalLines(words, len);
 
-        IEnumerable<string> justifiedLines = canonicalLines.Select(line => JustifyLine(line, len));
+        IEnumerable<string> justifiedLines = canonicalLines
+            .Take(canonicalLines.Count() - 1)
+            .Select(line => JustifyLine(line, len))
+            .Concat( new string[] { string.Join(' ', canonicalLines.Last()) });
 
         string result = string.Join('\n', justifiedLines);
 
@@ -51,11 +55,20 @@ public static class Kata
         int spacesToAdd = len - words.Sum(line => line.Length);
         if (words.Length > 1)
         {
-            int gapSize = spacesToAdd / (words.Length - 1);
-            foreach (string word in words[1..])
+            int mainGapSize = spacesToAdd / (words.Length - 1);
+            int residualSpacesToAdd = spacesToAdd % (words.Length - 1);
+            for (int i = 1; i < words.Length; i++)
             {
-                result.Append(new string(' ', gapSize));
-                result.Append(word);
+                if (i <= residualSpacesToAdd)
+                {
+                    result.Append(new string(' ', mainGapSize + 1));
+                }
+                else
+                {
+                    result.Append(new string(' ', mainGapSize));
+                }
+
+                result.Append(words[i]);
             }
         }
 
