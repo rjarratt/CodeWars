@@ -108,7 +108,7 @@ public class MorseCodeDecoder
 
     private static int[] KMeansCluster(int[] vector)
     {
-        const int MaxIterations = 1;
+        const int MaxIterations = 10;
 
         // We need k=3 clusters for the following 4 time lengths:
         // 1. Dot and inter-dot-dash pause
@@ -118,18 +118,20 @@ public class MorseCodeDecoder
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
-        //double[] means = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
+        double[] means = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
         //    3.065868263473054 9.78448275862069 21 
         // 5, 9, 21 gets close, does TITANIC correctly
-        double[] means = new double[] { 5, 9, 21 };
+        //double[] means = new double[] { 5, 9, 21 };
         PrintMeans(means);
 
         int[] newClusterNumber = new int[vector.Length];
 
         bool converged = false;
+        int iterationCount = 0;
 
         for (int i = 0; i < MaxIterations && !converged; i++)
         {
+            iterationCount++;
             // Assign step
             for (int j = 0; j < vector.Length; j++)
             {
@@ -181,6 +183,14 @@ public class MorseCodeDecoder
             PrintClusters(newClusterNumber);
         }
 
+        if (converged)
+        {
+            Console.WriteLine($"Converged in {iterationCount} iterations");
+        }
+        else
+        {
+            Console.WriteLine("Failed to converge");
+        }
         return newClusterNumber;
     }
 
