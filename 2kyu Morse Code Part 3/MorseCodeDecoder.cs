@@ -118,11 +118,11 @@ public class MorseCodeDecoder
         // We use the shortest and longest runs to set the initial vector of means
         int min = vector.Min();
         int max = vector.Max();
-        double[] means = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
+        double[] centroids = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
         //    3.065868263473054 9.78448275862069 21 
         // 5, 9, 21 gets close, does TITANIC correctly
-        //double[] means = new double[] { 5, 9, 21 };
-        PrintMeans(means);
+        //double[] centroids = new double[] { 5, 9, 21 };
+        PrintMeans(centroids);
 
         int[] newClusterNumber = new int[vector.Length];
 
@@ -136,9 +136,9 @@ public class MorseCodeDecoder
             for (int j = 0; j < vector.Length; j++)
             {
                 double distance = int.MaxValue;
-                for (int k = 0; k < means.Length; k++)
+                for (int k = 0; k < centroids.Length; k++)
                 {
-                    double currentDistance = Math.Abs(vector[j] - means[k]);
+                    double currentDistance = Math.Abs(vector[j] - centroids[k]);
                     if (currentDistance < distance)
                     {
                         distance = currentDistance;
@@ -149,7 +149,7 @@ public class MorseCodeDecoder
 
             converged = true;
             // Update step
-            for (int k = 0; k < means.Length; k++)
+            for (int k = 0; k < centroids.Length; k++)
             {
                 int numInCluster = 0;
                 int sum = 0;
@@ -172,14 +172,14 @@ public class MorseCodeDecoder
                     newMean = int.MaxValue;
                 }
 
-                if (means[k] != newMean)
+                if (centroids[k] != newMean)
                 {
-                    means[k] = newMean;
+                    centroids[k] = newMean;
                     converged = false;
                 }
             }
 
-            PrintMeans(means);
+            PrintMeans(centroids);
             PrintClusters(newClusterNumber);
         }
 
@@ -193,7 +193,6 @@ public class MorseCodeDecoder
         }
         return newClusterNumber;
     }
-
     private static void PrintClusters(int[] newClusterNumber)
     {
         Console.WriteLine($"Clusters are:");
