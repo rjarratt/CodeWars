@@ -14,14 +14,14 @@ public class MorseCodeDecoder
         {
             int[] lengths = RunLengths(trimmedBits).ToArray();
             Console.WriteLine($"Trimmed bits: {trimmedBits}");
-            int[] clusters = KMeansCluster(lengths);
+            Clusters clusters = KMeansCluster(lengths);
 
-            for (int i = 0; i < clusters.Length; i++)
+            for (int i = 0; i < clusters.ClusterNumbers.Length; i++)
             {
                 string morse;
                 if (i % 2 == 0)
                 {
-                    morse = clusters[i] switch
+                    morse = clusters.ClusterNumbers[i] switch
                     {
                         0 => ".",
                         1 => "-",
@@ -30,7 +30,7 @@ public class MorseCodeDecoder
                 }
                 else
                 {
-                    morse = clusters[i] switch
+                    morse = clusters.ClusterNumbers[i] switch
                     {
                         0 => "",
                         1 => " ",
@@ -45,9 +45,9 @@ public class MorseCodeDecoder
             }
         }
 
-        Console.WriteLine($"Decoded results: {result.ToString()}");
+        Console.WriteLine($"Decoded results: {result}");
         Console.WriteLine($"Bits:    {trimmedBits}");
-        Console.WriteLine($"Mapping: {diagnosticString.ToString()}");
+        Console.WriteLine($"Mapping: {diagnosticString}");
         return result.ToString();
     }
 
@@ -106,7 +106,7 @@ public class MorseCodeDecoder
         }
     }
 
-    private static int[] KMeansCluster(int[] vector)
+    private static Clusters KMeansCluster(int[] vector)
     {
         const int MaxIterations = 10;
 
@@ -122,7 +122,7 @@ public class MorseCodeDecoder
         //    3.065868263473054 9.78448275862069 21 
         // 5, 9, 21 gets close, does TITANIC correctly
         //double[] centroids = new double[] { 5, 9, 21 };
-        PrintMeans(centroids);
+        PrintCentroids(centroids);
 
         int[] newClusterNumber = new int[vector.Length];
 
@@ -179,20 +179,25 @@ public class MorseCodeDecoder
                 }
             }
 
-            PrintMeans(centroids);
+            PrintCentroids(centroids);
             PrintClusters(newClusterNumber);
         }
 
+        double evaluation = vector.Select((point, index) => Math.Abs(point - centroids[newClusterNumber[index]])).Average();
+
         if (converged)
         {
-            Console.WriteLine($"Converged in {iterationCount} iterations");
+            Console.WriteLine($"Converged in {iterationCount} iterations, evaluation is {evaluation}");
         }
         else
         {
-            Console.WriteLine("Failed to converge");
+            Console.WriteLine($"Failed to converge, evaluation is {evaluation}");
         }
-        return newClusterNumber;
+
+        return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation };
     }
+
+
     private static void PrintClusters(int[] newClusterNumber)
     {
         Console.WriteLine($"Clusters are:");
@@ -204,7 +209,7 @@ public class MorseCodeDecoder
         Console.WriteLine();
     }
 
-    private static void PrintMeans(double[] means)
+    private static void PrintCentroids(double[] means)
     {
         Console.WriteLine($"Means are:");
         foreach (double mean in means)
@@ -214,4 +219,12 @@ public class MorseCodeDecoder
 
         Console.WriteLine();
     }
+
+    private record Clusters
+    {
+        public int[] ClusterNumbers { get; set; }
+
+        public double Evaluation { get; set; }
+    }
 }
+
