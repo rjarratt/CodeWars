@@ -147,7 +147,7 @@ public class MorseCodeDecoder
     {
         const int MaxIterations = 10;
 
-        //PrintCentroids("Initial", initialCentroids);
+        PrintCentroids("Initial", initialCentroids);
 
         double[] centroids = new double[initialCentroids.Length];
         Array.Copy(initialCentroids, centroids, centroids.Length);
@@ -223,6 +223,7 @@ public class MorseCodeDecoder
         }
 
         PrintCentroids("Converged", centroids);
+        PrintClusters(newClusterNumber);
 
         return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation };
     }
