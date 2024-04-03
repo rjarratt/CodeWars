@@ -223,7 +223,7 @@ public class MorseCodeDecoder
         PrintCentroids("Converged", centroids);
         PrintClusters(newClusterNumber);
 
-        return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation };
+        return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation, Centroids = centroids };
     }
 
 
@@ -238,10 +238,10 @@ public class MorseCodeDecoder
         Console.WriteLine();
     }
 
-    private static void PrintCentroids(string prefix, double[] means)
+    private static void PrintCentroids(string prefix, double[] centroids)
     {
-        Console.WriteLine($"{prefix} centroids are:");
-        foreach (double mean in means)
+        Console.Write($"{prefix} centroids are: ");
+        foreach (double mean in centroids)
         {
             Console.Write($"{mean} ");
         }
@@ -254,6 +254,8 @@ public class MorseCodeDecoder
         public int[] ClusterNumbers { get; set; }
 
         public double Evaluation { get; set; }
+
+        public double[] Centroids { get; set; }
     }
 }
 
