@@ -179,21 +179,19 @@ public class MorseCodeDecoder
             // Update step
             for (int k = 0; k < centroids.Length; k++)
             {
-                int numInCluster = 0;
-                int sum = 0;
+                List<int> clusterValues = new List<int>();
                 for (int j = 0; j < vector.Length; j++)
                 {
                     if (newClusterNumber[j] == k)
                     {
-                        sum += vector[j];
-                        numInCluster++;
+                        clusterValues.Add(vector[j]);
                     }
                 }
 
                 double newMean;
-                if (numInCluster > 0)
+                if (clusterValues.Count > 0)
                 {
-                    newMean = (double)sum / numInCluster;
+                    newMean = clusterValues.Average();
                 }
                 else
                 {
