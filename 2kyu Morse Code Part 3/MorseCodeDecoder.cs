@@ -147,7 +147,7 @@ public class MorseCodeDecoder
     {
         const int MaxIterations = 10;
 
-        PrintCentroids(initialCentroids);
+        //PrintCentroids("Initial", initialCentroids);
 
         double[] centroids = new double[initialCentroids.Length];
         Array.Copy(initialCentroids, centroids, centroids.Length);
@@ -207,7 +207,7 @@ public class MorseCodeDecoder
                 }
             }
 
-            //PrintCentroids(centroids);
+            //PrintCentroids("Interim", centroids);
             //PrintClusters(newClusterNumber);
         }
 
@@ -221,6 +221,8 @@ public class MorseCodeDecoder
         {
             Console.WriteLine($"Failed to converge, evaluation is {evaluation}");
         }
+
+        PrintCentroids("Converged", centroids);
 
         return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation };
     }
@@ -237,9 +239,9 @@ public class MorseCodeDecoder
         Console.WriteLine();
     }
 
-    private static void PrintCentroids(double[] means)
+    private static void PrintCentroids(string prefix, double[] means)
     {
-        Console.WriteLine($"Means are:");
+        Console.WriteLine($"{prefix} centroids are:");
         foreach (double mean in means)
         {
             Console.Write($"{mean} ");
