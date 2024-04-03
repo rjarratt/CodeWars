@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 
 public class MorseCodeDecoder
@@ -14,7 +15,8 @@ public class MorseCodeDecoder
         {
             int[] lengths = RunLengths(trimmedBits).ToArray();
             Console.WriteLine($"Trimmed bits: {trimmedBits}");
-            Clusters clusters = KMeansCluster(lengths);
+
+            Clusters clusters = FindBestCluster(lengths);
 
             for (int i = 0; i < clusters.ClusterNumbers.Length; i++)
             {
@@ -49,6 +51,41 @@ public class MorseCodeDecoder
         Console.WriteLine($"Bits:    {trimmedBits}");
         Console.WriteLine($"Mapping: {diagnosticString}");
         return result.ToString();
+    }
+
+    private static Clusters FindBestCluster(int[] lengths)
+    {
+        // We need k=3 clusters for the following 4 time lengths:
+        // 1. Dot and inter-dot-dash pause
+        // 2. Dash and inter-letter pause
+        // 3. Word delimiter
+
+        // We use the shortest and longest runs to set the initial vector of means
+        int min = lengths.Min();
+        int max = lengths.Max();
+
+        double[] initialCentroids = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
+        //double[] initialCentroids = new double[] { 5, 9, 21 };
+        Clusters clusters = KMeansCluster(lengths, initialCentroids);
+        Random rand = new Random();
+        int i = 0;
+        do
+        {
+            i++;
+            double[] centroids = new double[] { rand.NextDouble(), rand.NextDouble(), rand.NextDouble() }.OrderBy(value => value).Select(value => value + ((max-min) * value)).ToArray();
+            //    3.065868263473054 9.78448275862069 21 
+            // 5, 9, 21 gets close, does TITANIC correctly
+            //double[] centroids = new double[] { 5, 9, 21 };
+            Clusters candidateCluster = KMeansCluster(lengths, centroids);
+
+            if (candidateCluster.Evaluation < clusters.Evaluation)
+            {
+                clusters = candidateCluster;
+            }
+        }
+        while (i < 5);
+
+        return clusters;
     }
 
     public static string decodeMorse(string morseCode)
@@ -106,23 +143,14 @@ public class MorseCodeDecoder
         }
     }
 
-    private static Clusters KMeansCluster(int[] vector)
+    private static Clusters KMeansCluster(int[] vector, double[] initialCentroids)
     {
         const int MaxIterations = 10;
 
-        // We need k=3 clusters for the following 4 time lengths:
-        // 1. Dot and inter-dot-dash pause
-        // 2. Dash and inter-letter pause
-        // 3. Word delimiter
+        PrintCentroids(initialCentroids);
 
-        // We use the shortest and longest runs to set the initial vector of means
-        int min = vector.Min();
-        int max = vector.Max();
-        double[] centroids = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
-        //    3.065868263473054 9.78448275862069 21 
-        // 5, 9, 21 gets close, does TITANIC correctly
-        //double[] centroids = new double[] { 5, 9, 21 };
-        PrintCentroids(centroids);
+        double[] centroids = new double[initialCentroids.Length];
+        Array.Copy(initialCentroids, centroids, centroids.Length);
 
         int[] newClusterNumber = new int[vector.Length];
 
@@ -179,11 +207,11 @@ public class MorseCodeDecoder
                 }
             }
 
-            PrintCentroids(centroids);
-            PrintClusters(newClusterNumber);
+            //PrintCentroids(centroids);
+            //PrintClusters(newClusterNumber);
         }
 
-        double evaluation = vector.Select((point, index) => Math.Abs(point - centroids[newClusterNumber[index]])).Average();
+        double evaluation = vector.Select((point, index) => Math.Abs(point - centroids[newClusterNumber[index]])).Max();
 
         if (converged)
         {
