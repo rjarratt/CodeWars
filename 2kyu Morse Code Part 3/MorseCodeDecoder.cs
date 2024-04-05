@@ -67,23 +67,23 @@ public class MorseCodeDecoder
         double[] initialCentroids = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
         //double[] initialCentroids = new double[] { 5, 9, 21 };
         Clusters clusters = KMeansCluster(lengths, initialCentroids);
-        Random rand = new Random();
-        int i = 0;
-        do
+        PrintCentroids($"Initial: {initialCentroids[0]}, {initialCentroids[1]}, {initialCentroids[2]} Evaluation: {clusters.Evaluation} Final:", clusters.Centroids);
+        for (int i = min; i <= max - 2; i++)
         {
-            i++;
-            double[] centroids = new double[] { rand.NextDouble(), rand.NextDouble(), rand.NextDouble() }.OrderBy(value => value).Select(value => value + ((max-min) * value)).ToArray();
-            //    3.065868263473054 9.78448275862069 21 
-            // 5, 9, 21 gets close, does TITANIC correctly
-            //double[] centroids = new double[] { 5, 9, 21 };
-            Clusters candidateCluster = KMeansCluster(lengths, centroids);
+            for (int j = i + 1; j <= max -1; j++)
+            {
+                for (int k = j + 1; k <= max; k++)
+                {
+                    Clusters candidateCluster = KMeansCluster(lengths, new double[] { i, j, k });
 
             if (candidateCluster.Evaluation < clusters.Evaluation)
             {
                 clusters = candidateCluster;
+                        PrintCentroids($"Initial: {i}, {j}, {k} Evaluation: {clusters.Evaluation} Final:", clusters.Centroids);
             }
         }
-        while (i < 5);
+            }
+        }
 
         return clusters;
     }
