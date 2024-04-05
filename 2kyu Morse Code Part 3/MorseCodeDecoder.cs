@@ -91,6 +91,7 @@ public class MorseCodeDecoder
     {
         string[] words = morseCode.Trim().Split("   ");
         string result = string.Join(' ', words.Select(word => DecodeWord(word)));
+        Console.WriteLine($"Final string: {result}");
         return result;
     }
 
