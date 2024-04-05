@@ -65,7 +65,6 @@ public class MorseCodeDecoder
         int max = lengths.Max();
 
         double[] initialCentroids = new double[] { min, Math.Max((double)(max + min) / 2, 2 * min), Math.Max(max, 6 * min) };
-        //double[] initialCentroids = new double[] { 5, 9, 21 };
         Clusters clusters = KMeansCluster(lengths, initialCentroids);
         PrintCentroids($"Initial: {initialCentroids[0]}, {initialCentroids[1]}, {initialCentroids[2]} Evaluation: {clusters.Evaluation} Final:", clusters.Centroids);
         for (int i = min; i <= max - 2; i++)
@@ -76,12 +75,12 @@ public class MorseCodeDecoder
                 {
                     Clusters candidateCluster = KMeansCluster(lengths, new double[] { i, j, k });
 
-            if (candidateCluster.Evaluation < clusters.Evaluation)
-            {
-                clusters = candidateCluster;
+                    if (candidateCluster.Evaluation < clusters.Evaluation)
+                    {
+                        clusters = candidateCluster;
                         PrintCentroids($"Initial: {i}, {j}, {k} Evaluation: {clusters.Evaluation} Final:", clusters.Centroids);
-            }
-        }
+                    }
+                }
             }
         }
 
@@ -209,6 +208,9 @@ public class MorseCodeDecoder
                 }
             }
 
+            // Shift clusters left if the input was too short for some clusters to have any values.
+            centroids = centroids.Where(centroid => centroid != int.MaxValue).ToArray();
+
             //PrintCentroids("Interim", centroids);
             //PrintClusters(newClusterNumber);
         }
@@ -231,7 +233,7 @@ public class MorseCodeDecoder
     }
 
     private static double CalculateMeanCentroid(List<int> clusterValues)
-        {
+    {
         double newCentroid;
         if (clusterValues.Count > 0)
         {
@@ -262,7 +264,7 @@ public class MorseCodeDecoder
         else
         {
             newCentroid = int.MaxValue;
-    }
+        }
 
         return newCentroid;
     }
