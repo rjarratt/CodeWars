@@ -145,9 +145,19 @@ public class MorseCodeDecoder
 
     private static Clusters KMeansCluster(int[] vector, double[] initialCentroids)
     {
+        return KCluster(vector, initialCentroids, CalculateMeanCentroid);
+    }
+
+    private static Clusters KMedianCluster(int[] vector, double[] initialCentroids)
+    {
+        return KCluster(vector, initialCentroids, CalculateMedianCentroid);
+    }
+
+    private static Clusters KCluster(int[] vector, double[] initialCentroids, Func<List<int>, double> calculateNewCentroid)
+    {
         const int MaxIterations = 10;
 
-        PrintCentroids("Initial", initialCentroids);
+        //PrintCentroids("Initial", initialCentroids);
 
         double[] centroids = new double[initialCentroids.Length];
         Array.Copy(initialCentroids, centroids, centroids.Length);
@@ -188,19 +198,13 @@ public class MorseCodeDecoder
                     }
                 }
 
-                double newMean;
-                if (clusterValues.Count > 0)
-                {
-                    newMean = clusterValues.Average();
-                }
-                else
-                {
-                    newMean = int.MaxValue;
-                }
+                clusterValues.Sort();
 
-                if (centroids[k] != newMean)
+                double newCentroid = calculateNewCentroid(clusterValues);
+
+                if (centroids[k] != newCentroid)
                 {
-                    centroids[k] = newMean;
+                    centroids[k] = newCentroid;
                     converged = false;
                 }
             }
@@ -211,21 +215,57 @@ public class MorseCodeDecoder
 
         double evaluation = vector.Select((point, index) => Math.Abs(point - centroids[newClusterNumber[index]])).Max();
 
-        if (converged)
-        {
-            Console.WriteLine($"Converged in {iterationCount} iterations, evaluation is {evaluation}");
-        }
-        else
-        {
-            Console.WriteLine($"Failed to converge, evaluation is {evaluation}");
-        }
+        //if (converged)
+        //{
+        //    Console.WriteLine($"Converged in {iterationCount} iterations, evaluation is {evaluation}");
+        //}
+        //else
+        //{
+        //    Console.WriteLine($"Failed to converge, evaluation is {evaluation}");
+        //}
 
-        PrintCentroids("Converged", centroids);
-        PrintClusters(newClusterNumber);
+        //PrintCentroids("Converged", centroids);
+        //PrintClusters(newClusterNumber);
 
         return new Clusters { ClusterNumbers = newClusterNumber, Evaluation = evaluation, Centroids = centroids };
     }
 
+    private static double CalculateMeanCentroid(List<int> clusterValues)
+        {
+        double newCentroid;
+        if (clusterValues.Count > 0)
+        {
+            newCentroid = clusterValues.Average();
+        }
+        else
+        {
+            newCentroid = int.MaxValue;
+        }
+
+        return newCentroid;
+    }
+
+    private static double CalculateMedianCentroid(List<int> clusterValues)
+    {
+        double newCentroid;
+        if (clusterValues.Count > 0)
+        {
+            if (clusterValues.Count % 2 == 0)
+            {
+                newCentroid = (clusterValues[(clusterValues.Count / 2) - 1] + clusterValues[clusterValues.Count / 2]) / 2;
+            }
+            else
+            {
+                newCentroid = clusterValues[clusterValues.Count / 2];
+            }
+        }
+        else
+        {
+            newCentroid = int.MaxValue;
+    }
+
+        return newCentroid;
+    }
 
     private static void PrintClusters(int[] newClusterNumber)
     {
